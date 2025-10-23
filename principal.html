@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Farmácia Jayane — Sistema</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #002060;
+            --btn: #ffcc00;
+            --card: #07224a;
+            --muted: #cbd5e1;
+            --white: #ffffff;
+            --radius: 12px;
+            font-family: Inter, system-ui, Arial;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+            color: var(--white)
+        }
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+            gap: 18px;
+            padding: 18px
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, rgba(68, 67, 67, 0), rgba(176, 175, 175, 0.08));
+            border-radius: 12px;
+            padding: 12px;
+            flex-shrink: 0
+        }
+
+        .brand {
+            display: flex;
+            gap: 10px;
+            align-items: center
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: var(--btn);
+            display: grid;
+            place-items: center;
+            color: #001;
+            font-weight: 900
+        }
+
+        .brand h3 {
+            margin: 0;
+            font-size: 16px
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 10px
+        }
+
+        .nav button {
+            background: transparent;
+            border: 0;
+            color: var(--muted);
+            padding: 10px;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700
+        }
+
+        .nav button.active {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--btn)
+        }
+
+        .small {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 12px
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px
+        }
+
+        .welcome {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.058), rgba(255, 255, 255, 0.01));
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .welcome .meta h2 {
+            margin: 0;
+            font-size: 18px
+        }
+
+        .page {
+            background: linear-gradient(180deg, rgba(251, 251, 251, 0.067), rgba(255, 255, 255, 0.01));
+            padding: 12px;
+            border-radius: 10px
+        }
+
+        .grid {
+            display: grid;
+            gap: 12px
+        }
+
+        .grid.cols-3 {
+            grid-template-columns: repeat(3, 1fr)
+        }
+
+        .grid.cols-2 {
+            grid-template-columns: repeat(2, 1fr)
+        }
+
+        .grid.cols-1 {
+            grid-template-columns: 1fr
+        }
+
+        .product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02)
+        }
+
+        .product .left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 0;
+            cursor: pointer;
+            font-weight: 800;
+            background: var(--btn);
+            color: #001
+        }
+
+        .btn.ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--muted)
+        }
+
+        /* Caixa & estoque */
+        .caixa-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 420px;
+            overflow: auto;
+            padding-right: 6px
+        }
+
+        .caixa-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.01)
+        }
+
+        /* Chart container fix */
+        .chart-wrap {
+            width: 100%;
+            height: 320px
+        }
+
+        /* responsive */
+        @media(max-width:1000px) {
+            .app {
+                padding: 12px;
+                flex-direction: column;
+            }
+
+            .sidebar {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 220px;
+                height: 100%;
+                background: var(--card);
+                padding: 16px;
+                z-index: 1000;
+            }
+
+            #menuToggle {
+                display: block;
+            }
+
+            .grid.cols-3 {
+                grid-template-columns: repeat(2, 1fr)
+            }
+        }
+
+        @media(max-width:640px) {
+            .grid.cols-3 {
+                grid-template-columns: 1fr
+            }
+
+            .chart-wrap {
+                height: 260px
+            }
+        }
+
+        /* search */
+        .search {
+            display: flex;
+            gap: 8px
+        }
+
+        input[type="search"] {
+            padding: 8px;
+            border-radius: 8px;
+            border: 0;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--white)
+        }
+    </style>
+</head>
+
+<body>
+    <!-- BOTÃO MENU MOBILE -->
+    <button id="menuToggle" class="btn ghost" style="display:none;position:fixed;top:18px;left:18px;z-index:999;">☰
+        Menu</button>
+
+    <div class="app">
+        <aside class="sidebar" aria-label="menu">
+            <div class="brand">
+                <div class="logo"><img src="WhatsAp.jpeg" alt=""></div>
+                <div>
+                    <h3>Farmácia Jayane</h3>
+                    <div class="muted">2.0</div>
+                </div>
+            </div>
+
+            <nav class="nav" id="menu">
+                <button data-page="dashboard" class="active">Inicio</button>
+                <button data-page="clientes">Clientes</button>
+                <button data-page="caixa">Gestão de Caixa</button>
+                <button data-page="medicamentos">Medicamentos</button>
+                <button data-page="estoque">Estoque</button>
+                <button data-page="receitas">Receitas</button>
+                <button data-page="lixeira">Lixeira</button>
+            </nav>
+
+            <div class="small" id="userInfo">Usuário: — • Perfil: —</div>
+        </aside>
+
+        <main class="main">
+            <header>
+                <div class="welcome page">
+                    <div class="meta">
+                        <h2 id="welcomeName">Bem-vindo</h2>
+                        <div class="muted" id="welcomeRole">Role</div>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:8px;align-items:center">
+                    <div class="search">
+                        <input type="search" id="globalSearch" placeholder="Buscar medicamento...">
+                    </div>
+                    <button class="btn" id="newSaleBtn">Buscar</button>
+                </div>
+            </header>
+
+            <section id="pages" style="display:grid;gap:12px">
+                <!-- Dashboard -->
+                <div class="page" id="page-dashboard">
+                    <h3>Dashboard</h3>
+                    <div class="grid cols-3" style="margin-top:12px">
+                        <div class="page">
+                            <h4>Resumo do Carrinho</h4>
+                            <div id="cartSummary" style="margin-top:10px"></div>
+                            <div style="margin-top:10px;display:flex;gap:8px">
+                                <button class="btn" id="checkoutBtn">COMPRAR MEDICAMENTOS</button>
+                                <button class="btn ghost" id="exportBtn">Exportar CSV</button>
+                            </div>
+                        </div>
+
+                        <div class="page">
+                            <h4>Top Produtos</h4>
+                            <div id="topProducts" style="margin-top:10px"></div>
+                        </div>
+
+                        <div class="page">
+                            <h4>Atalhos</h4>
+                            <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+                                <button class="btn ghost" onclick="openPage('medicamentos')">Gerenciar
+                                    medicamentos</button>
+                                <button class="btn ghost" onclick="openPage('estoque')">Ver estoque</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medicamentos -->
+                <div class="page" id="page-medicamentos" style="display:none">
+                    <h3>Medicamentos</h3>
+                    <p class="muted">Clique em "Adicionar" para incluir no carrinho.</p>
+                    <div id="medList" style="margin-top:12px"></div>
+                </div>
+
+                <!-- Clientes -->
+                <div class="page" id="page-clientes" style="display:none">
+                    <h3>Clientes</h3>
+                    <div id="clientsList" style="margin-top:12px"></div>
+                </div>
+
+                <!-- Caixa -->
+                <div class="page" id="page-caixa" style="display:none">
+                    <h3>Gestão de Caixa</h3>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+                        <div style="flex:1;min-width:300px" class="page">
+                            <h4>Lista de Produtos</h4>
+                            <div class="caixa-list" id="caixaProductList"></div>
+                        </div>
+
+                        <div style="width:420px" class="page">
+                            <h4>Gráfico de Estoque / Valor</h4>
+                            <div class="chart-wrap"><canvas id="stockChart" style="width:100%;height:100%"></canvas>
+                            </div>
+                            <div style="margin-top:10px;display:flex;gap:8px">
+                                <button class="btn ghost" id="refreshChartBtn">Atualizar gráfico</button>
+                                <button class="btn ghost" id="exportInvBtn">Exportar inventário</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estoque -->
+                <div class="page" id="page-estoque" style="display:none">
+                    <h3>Estoque — Lista extensa</h3>
+                    <p class="muted">Lista completa de medicamentos — muitos itens para preencher o inventário.</p>
+                    <div id="bigStock" style="margin-top:12px;max-height:520px;overflow:auto"></div>
+                </div>
+
+                <div class="page" id="page-receitas" style="display:none">
+                    <h3>Receitas</h3>
+                </div>
+                <div class="page" id="page-lixeira" style="display:none">
+                    <h3>Lixeira</h3>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        /* ==================== DADOS ==================== */
+        const baseProducts = [
+            "Captopril", "Cefalexina", "Cetirizina", "Doxiclina", "Dipirona", "Diclofenaco sódico", "Diazepam", "Clonazepa",
+            "Enalapril", "Bismuto", "Amoxilina", "Amitripilina", "Ácido Fólico", "Furosemida", "Fluoxetina", "Ferro", "Esomeprazol",
+            "Dexametazona", "Bupropiona", "Loratadina", "Levotiroxina", "Ibuprofeno", "Hidroclorotiazida", "Glibenclamida", "Glicazida",
+            "Meloxicam", "Losartana", "Lorazepam", "Naproxeno", "Metoclopramida", "Nimesulida", "Pantoprazol", "Omeprazol", "Paracetamol"
+        ];
+        let products = []; let idCounter = 1;
+        baseProducts.forEach(name => {
+            for (let i = 0; i < 3; i++) {
+                products.push({
+                    id: idCounter++,
+                    name: `${name}${i === 0 ? '' : ' - ' + (i + 1)}`,
+                    price: (Math.random() * 40 + 5).toFixed(2),
+                    stock: Math.floor(Math.random() * 200) + 5
+                });
+            }
+        });
+
+        let cart = [];
+
+        /* ==================== USUÁRIO ==================== */
+        function getQueryParams() { const q = {}; location.search.replace(/^\?/, '').split('&').forEach(p => { if (!p) return; const [k, v] = p.split('='); q[k] = v ? decodeURIComponent(v) : '' }); return q; }
+        const qp = getQueryParams();
+        setUserFromQuery(qp);
+        function setUserFromQuery(q) {
+            const name = q.name ? decodeURIComponent(q.name) : 'Usuário';
+            const role = q.role || 'visitor';
+            document.getElementById('welcomeName').textContent = name;
+            document.getElementById('welcomeRole').textContent = role === 'admin' ? 'Administradora' : role === 'client' ? 'Cliente' : 'Visitante';
+            document.getElementById('userInfo').textContent = `Usuário: ${name} • Perfil: ${role}`;
+        }
+
+        /* ==================== MENU ==================== */
+        const menu = document.getElementById('menu');
+        document.querySelectorAll('#menu button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#menu button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                openPage(btn.dataset.page);
+                if (window.innerWidth <= 1000) { menu.style.display = 'none'; }
+            });
+        });
+
+        const menuToggle = document.getElementById('menuToggle');
+        menuToggle.addEventListener('click', () => { menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; });
+
+        function openPage(pageId) {
+            document.querySelectorAll('[id^="page-"]').forEach(p => p.style.display = 'none');
+            const node = document.getElementById('page-' + pageId);
+            if (node) node.style.display = '';
+            else document.getElementById('page-dashboard').style.display = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ==================== RENDERERS ==================== */
+        function renderAll() { renderMedicamentos(); renderCartSummary(); renderTopProducts(); renderClients(); renderCaixaList(); renderBigStock(); updateChart(); }
+
+        function renderMedicamentos() {
+            const list = document.getElementById('medList'); list.innerHTML = '';
+            products.forEach(p => {
+                const el = document.createElement('div'); el.className = 'product';
+                el.innerHTML = `<div class="left"><strong>${p.name}</strong><div class="muted">Estoque: ${p.stock} • R$ ${p.price}</div></div>
+                    <div><input id="qty-${p.id}" type="number" min="1" value="1" style="width:64px;padding:6px;border-radius:6px;border:0;background:rgba(255,255,255,0.03);color:var(--white)">
+                    <button class="btn" onclick="addToCart(${p.id})" style="margin-left:8px">Adicionar</button></div>`;
+                list.appendChild(el);
+            });
+        }
+
+        function renderCartSummary() {
+            const wrap = document.getElementById('cartSummary'); wrap.innerHTML = '';
+            if (cart.length === 0) { wrap.innerHTML = '<div class="muted">Carrinho vazio.</div>'; return; }
+            cart.forEach(it => {
+                const p = products.find(x => x.id === it.id);
+                const row = document.createElement('div');
+                row.style.display = 'flex'; row.style.justifyContent = 'space-between'; row.style.padding = '6px 0';
+                row.innerHTML = `<div><strong>${p.name}</strong><div class="muted">R$ ${p.price} • qtd: ${it.qty}</div></div>
+                <div style="display:flex;gap:8px;align-items:center"><div class="muted">R$ ${(p.price * it.qty).toFixed(2)}</div><button class="btn ghost" onclick="removeFromCart(${p.id})">Remover</button></div>`;
+                wrap.appendChild(row);
+            });
+            const total = cart.reduce((s, it) => s + it.qty * +products.find(p => p.id === it.id).price, 0);
+            const totalRow = document.createElement('div'); totalRow.style.display = 'flex'; totalRow.style.justifyContent = 'space-between'; totalRow.style.marginTop = '10px';
+            totalRow.innerHTML = `<strong>Total</strong><strong>R$ ${total.toFixed(2)}</strong>`;
+            wrap.appendChild(totalRow);
+        }
+
+        function renderTopProducts() {
+            const wrap = document.getElementById('topProducts'); wrap.innerHTML = '';
+            const sample = products.slice(0, 6);
+            sample.forEach(p => {
+                const d = document.createElement('div'); d.style.padding = '6px 0'; d.style.display = 'flex'; d.style.justifyContent = 'space-between';
+                d.innerHTML = `<div><strong>${p.name}</strong><div class="muted">R$ ${p.price}</div></div><div class="muted">Est: ${p.stock}</div>`;
+                wrap.appendChild(d);
+            });
+        }
+
+        function loadClients() { try { return JSON.parse(localStorage.getItem('fj_clients') || '[]'); } catch (e) { return []; } }
+        function renderClients() { const wrap = document.getElementById('clientsList'); const clients = loadClients(); wrap.innerHTML = ''; if (clients.length === 0) { wrap.innerHTML = '<div class="muted">Nenhum cliente cadastrado.</div>'; return; } clients.forEach(c => { const el = document.createElement('div'); el.className = 'product'; el.innerHTML = `<div class="left"><strong>${c.name}</strong><div class="muted">${c.email} • ${c.phone || '—'}</div></div>`; wrap.appendChild(el); }); }
+
+        function renderCaixaList() { const wrap = document.getElementById('caixaProductList'); wrap.innerHTML = ''; products.forEach(p => { const el = document.createElement('div'); el.className = 'caixa-item'; el.innerHTML = `<div><strong>${p.name}</strong><div class="muted">Estoque: ${p.stock} • R$ ${p.price}</div></div><div class="muted">Total: R$ ${(p.stock * p.price).toFixed(2)}</div>`; wrap.appendChild(el); }); }
+
+        function renderBigStock() { const wrap = document.getElementById('bigStock'); wrap.innerHTML = ''; products.forEach(p => { const el = document.createElement('div'); el.className = 'product'; el.style.padding = '10px'; el.style.borderRadius = '6px'; el.innerHTML = `<div class="left"><strong>${p.name}</strong><div class="muted">Estoque: ${p.stock} • R$ ${p.price}</div></div><div class="muted">ID: ${p.id}</div>`; wrap.appendChild(el); }); }
+
+        /* ==================== CARRINHO ==================== */
+        function addToCart(id) {
+            const qtyInput = document.getElementById('qty-' + id);
+            const qty = Math.max(1, Number(qtyInput?.value || 1));
+            const prod = products.find(p => p.id === id);
+            if (qty > prod.stock) { alert('Estoque insuficiente'); return; }
+            const existing = cart.find(c => c.id === id);
+            if (existing) { existing.qty += qty; }
+            else { cart.push({ id, qty }); }
+            renderCartSummary();
+            alert(`${prod.name} adicionado ao carrinho!`);
+        }
+        function removeFromCart(id) { cart = cart.filter(c => c.id !== id); renderCartSummary(); }
+
+        /* ==================== CHECKOUT ==================== */
+        document.getElementById('checkoutBtn').addEventListener('click', () => {
+            if (cart.length === 0) { alert('Carrinho vazio'); return; }
+            if (!confirm('Confirmar venda?')) return;
+            cart.forEach(it => { const p = products.find(x => x.id === it.id); if (p) p.stock = Math.max(0, p.stock - it.qty); });
+            cart = []; renderAll(); alert('Venda concluída');
+        });
+
+        /* ==================== EXPORT ==================== */
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const data = products.map(p => `${p.id};${p.name};${p.price};${p.stock}`).join('\n');
+            const blob = new Blob([data], { type: 'text/csv' }); const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'produtos.csv'; a.click(); URL.revokeObjectURL(url);
+        });
+
+        /* ==================== CHART ==================== */
+        let stockChart = null;
+        function updateChart() {
+            const labels = products.slice(0, 20).map(p => p.name);
+            const stockData = products.slice(0, 20).map(p => p.stock);
+            const valueData = products.slice(0, 20).map(p => Math.round(p.stock * +p.price));
+            const ctx = document.getElementById('stockChart').getContext('2d');
+            if (stockChart) stockChart.destroy();
+            stockChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Estoque (unid.)', data: stockData, backgroundColor: 'rgba(255,204,0,0.9)', yAxisID: 'y1' },
+                        { label: 'Valor R$', data: valueData, backgroundColor: 'rgba(255,255,255,0.12)', yAxisID: 'y2' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y1: { type: 'linear', position: 'left', beginAtZero: true, ticks: { color: '#fff' } },
+                        y2: { type: 'linear', position: 'right', beginAtZero: true, grid: { drawOnChartArea: false }, ticks: { color: '#fff' } }
+                    },
+                    plugins: { legend: { labels: { color: '#fff' } } },
+                }
+            });
+        }
+        document.getElementById('refreshChartBtn').addEventListener('click', () => updateChart());
+
+        /* ==================== SEARCH ==================== */
+        document.getElementById('globalSearch').addEventListener('input', (e) => {
+            const q = e.target.value.trim().toLowerCase();
+            if (!q) { renderMedicamentos(); return; }
+            const filtered = products.filter(p => p.name.toLowerCase().includes(q) || String(p.id) === q);
+            const list = document.getElementById('medList'); list.innerHTML = '';
+            filtered.forEach(p => {
+                const el = document.createElement('div'); el.className = 'product';
+                el.innerHTML = `<div class="left"><strong>${p.name}</strong><div class="muted">Estoque: ${p.stock} • R$ ${p.price}</div></div>
+                <div><input id="qty-${p.id}" type="number" min="1" value="1" style="width:64px;padding:6px;border-radius:6px;border:0;background:rgba(255,255,255,0.03);color:var(--white)">
+                <button class="btn" onclick="addToCart(${p.id})" style="margin-left:8px">Adicionar</button></div>`;
+                list.appendChild(el);
+            });
+        });
+
+        document.getElementById('newSaleBtn').addEventListener('click', () => openPage('medicamentos'));
+
+        renderAll(); openPage('dashboard'); updateChart();
+    </script>
+</body>
+
+</html>

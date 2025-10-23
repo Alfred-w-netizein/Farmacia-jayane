@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login — Farmácia Jayane</title>
+    <style>
+        :root {
+            --bg: #002060;
+            --card: #ffffff;
+            --btn: #ffcc00;
+            --text: #001;
+            --muted: #555;
+            font-family: "Inter", system-ui, Arial;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text);
+        }
+
+        .container {
+            background: linear-gradient(180deg, rgba(255, 254, 254, 0.544), rgba(14, 14, 14, 0.236));
+            width: 95%;
+            max-width: 1200px;
+            border-radius: 18px;
+            padding: 40px 50px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--bg);
+            margin-top: 0;
+        }
+
+        p.desc {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 32px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: #fcfcfc;
+            border-radius: 10px;
+            padding: 20px 24px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--bg);
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #04024fe9;
+            border-radius: 8px;
+            margin-top: 4px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            background: var(--btn);
+            color: var(--text);
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media(max-width:700px) {
+            .container {
+                padding: 24px;
+                max-width: 95%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Farmácia Jayane</h1>
+        <p class="desc">Escolha como deseja entrar no sistema</p>
+
+        <div class="options">
+            <!-- ADMIN -->
+            <div class="card">
+                <h3>Sou Administrador</h3>
+                <label>Usuário</label>
+                <input id="admUser" type="text" placeholder="Usuário">
+                <label>Senha</label>
+                <input id="admPass" type="password" placeholder="Senha">
+                <button class="btn" id="btnAdm">Entrar como Admin</button>
+                <div id="admMsg" style="color:red;margin-top:6px"></div>
+            </div>
+
+            <!-- CLIENTE -->
+            <div class="card">
+                <h3>Já sou Cliente</h3>
+                <label>Email</label>
+                <input id="cliEmail" type="email" placeholder="email@exemplo.com">
+                <label>Senha</label>
+                <input id="cliPass" type="password" placeholder="Senha">
+                <button class="btn" id="btnCliLogin">Entrar como Cliente</button>
+            </div>
+
+            <!-- VISITANTE -->
+            <div class="card">
+                <h3>Entrar como Visitante</h3>
+                <p style="color:var(--muted)">Acesse o sistema sem precisar de login.</p>
+                <button class="btn" id="btnVisit">Entrar como Visitante</button>
+            </div>
+
+            <!-- NOVO -->
+            <div class="card">
+                <h3>Primeira vez aqui?</h3>
+                <label>Nome completo</label>
+                <input id="regName" type="text" placeholder="Seu nome">
+                <label>Telefone</label>
+                <input id="regPhone" type="tel" placeholder="(xx) xxxxx-xxxx">
+                <label>Email</label>
+                <input id="regEmail" type="email" placeholder="email@exemplo.com">
+                <label>Senha</label>
+                <input id="regPass" type="password" placeholder="Senha">
+                <button class="btn" id="btnReg">Cadastrar e Entrar</button>
+            </div>
+        </div>
+
+        <footer>© 2025 Farmácia Jayane — Sistema interno</footer>
+    </div>
+
+    <script>
+        // ===== ADMIN CONFIG =====
+        const ADMIN = {
+            user: "yane gomes",   // coloque seu usuário
+            pass: "40028922"      // coloque sua senha
+        };
+
+        // LOGIN ADMIN
+        document.getElementById('btnAdm').addEventListener('click', () => {
+            const user = document.getElementById('admUser').value.trim();
+            const pass = document.getElementById('admPass').value;
+
+            if (user === ADMIN.user && pass === ADMIN.pass) {
+                window.location.href = 'principal.html?role=admin&name=' + encodeURIComponent(user);
+            } else {
+                document.getElementById('admMsg').textContent = "Usuário ou senha incorretos!";
+            }
+        });
+
+        // LOGIN CLIENTE
+        function loadClients() { try { return JSON.parse(localStorage.getItem('fj_clients') || '[]'); } catch { return []; } }
+        document.getElementById('btnCliLogin').addEventListener('click', () => {
+            const email = document.getElementById('cliEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('cliPass').value;
+            const clients = loadClients();
+            const c = clients.find(x => x.email === email && x.pass === pass);
+            if (!c) { alert('Email ou senha inválidos.'); return; }
+            window.location.href = 'principal.html?role=client&name=' + encodeURIComponent(c.name);
+        });
+
+        // VISITANTE
+        document.getElementById('btnVisit').addEventListener('click', () => {
+            window.location.href = 'principal.html?role=visitor&name=Visitante';
+        });
+
+        // REGISTRO
+        document.getElementById('btnReg').addEventListener('click', () => {
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('regPass').value;
+
+            if (!name || !email || !pass) { alert('Preencha todos os campos obrigatórios.'); return; }
+
+            const clients = loadClients();
+            if (clients.find(c => c.email === email)) { alert('Email já cadastrado.'); return; }
+
+            clients.push({ name, phone, email, pass });
+            localStorage.setItem('fj_clients', JSON.stringify(clients));
+
+            window.location.href = 'principal.html?role=client&name=' + encodeURIComponent(name);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo — Farmácia Jayane</title>
+    <style>
+        :root {
+            --bg: #002060;
+            --btn: #ffcc00;
+            --white: #ffffff;
+            font-family: "Inter", system-ui, Arial;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+            animation: fadeIn 1.5s ease;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            background-color: var(--btn);
+            color: #001;
+            border: none;
+            padding: 14px 26px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
+        }
+
+        footer {
+            position: absolute;
+            bottom: 15px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 800px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+        }
+
+        p {
+            max-width: 95%;
+            text-align: justify;
+            margin-bottom: 16px;
+            margin-top: -10px;
+            text-indent: 20px;
+        }
+
+        nav {
+            background: linear-gradient(180deg, #002060e9, #021b4e9e);
+            width: 95%;
+            max-width: 1200px;
+            border-radius: 18px;
+            padding: 40px 50px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <h1>Bem-vindo à <br>Farmácia Jayane </h1>
+        <h2>O seu sistema inteligente de gestão farmacêutica</h2>
+
+        <p>A Farmácia Jayane nasceu do sonho e da amizade de Joice Nara Barbosa e Yane Gomes, duas mulheres determinadas
+            e
+            movidas por um mesmo propósito: cuidar do próximo através da saúde.
+        <p>
+            Tudo começou com uma simples conversa entre as duas amigas sobre a importância de oferecer um atendimento
+            humano, acolhedor e de qualidade às pessoas da comunidade. Da junção dos nomes Joice e Yane, surgiu o nome
+            Jayane, símbolo de união, confiança e amor ao cuidado.
+        </p>
+        <p>
+            Com dedicação e muito trabalho, elas transformaram a ideia em realidade, criando um espaço onde cada cliente
+            é
+            tratado com atenção, respeito e carinho. Assim, a Farmácia Jayane se tornou mais do que um ponto de saúde —
+            tornou-se um lugar de cuidado e esperança.
+        </p>
+        </p>
+        <p></p>
+    </nav>
+    <button class="btn" id="entrarBtn">Entrar no Sistema</button>
+
+    <footer>© 2025 Farmácia Jayane — Todos os direitos reservados</footer>
+
+    <script>
+        // Redireciona automaticamente após 5 segundos
+        setTimeout(() => {
+            window.location.href = "login.html";
+        }, 30000);
+
+        // Ou manualmente pelo botão
+        document.getElementById("entrarBtn").addEventListener("click", () => {
+            window.location.href = "login.html";
+        });
+    </script>
+
+</body>
+
+</html>
